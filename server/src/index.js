@@ -13,8 +13,13 @@ import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import authRoutes from './routes/authRoutes.js';
 import vehicleRoutes from './routes/vehicleRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
+import fuelRoutes from './routes/fuelRoutes.js';
+import documentRoutes from './routes/documentRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import exportRoutes from './routes/exportRoutes.js';
 
 const app = express();
 
@@ -52,7 +57,12 @@ app.use('/uploads', express.static(process.env.UPLOAD_DIR || 'uploads'));
 app.use('/api/auth', authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/vehicles', serviceRoutes);
+app.use('/api/vehicles', fuelRoutes);
+app.use('/api/vehicles', documentRoutes);
+app.use('/api/vehicles', exportRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/analytics', analyticsRoutes);
 app.use('/api/admin', adminRoutes);
 
 // ── Health check ──────────────────────────────────────────────────────────────

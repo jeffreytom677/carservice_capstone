@@ -15,9 +15,6 @@ import { validate, paginate } from '../middleware/validationMiddleware.js';
 
 const router = Router();
 
-// All admin routes require authentication AND admin role
-router.use(protect, requireAdmin);
-
 // ── Service Types ─────────────────────────────────────────────────────────────
 const serviceTypeRules = [
   body('name').trim().notEmpty().withMessage('Service type name is required.'),
@@ -25,7 +22,12 @@ const serviceTypeRules = [
   body('defaultIntervalDays').optional().isFloat({ min: 0 }).withMessage('Interval days must be non-negative.'),
 ];
 
-router.get('/service-types', paginate, getServiceTypes);
+// Any authenticated user can read active service types (needed to log services)
+router.get('/service-types', protect, paginate, getServiceTypes);
+
+// All other admin routes require authentication AND admin role
+router.use(protect, requireAdmin);
+
 router.post('/service-types', serviceTypeRules, validate, createServiceType);
 router.put('/service-types/:id', [param('id').isMongoId()], serviceTypeRules, validate, updateServiceType);
 router.delete('/service-types/:id', [param('id').isMongoId()], validate, deleteServiceType);

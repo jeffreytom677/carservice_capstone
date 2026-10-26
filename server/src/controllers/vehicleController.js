@@ -59,7 +59,10 @@ export const createVehicle = async (req, res, next) => {
 // ── GET /api/vehicles/:id ─────────────────────────────────────────────────────
 export const getVehicle = async (req, res, next) => {
   try {
-    const vehicle = await Vehicle.findOne({ _id: req.params.id, owner: req.user._id });
+    const filter = req.user.role === 'admin'
+      ? { _id: req.params.id }
+      : { _id: req.params.id, owner: req.user._id };
+    const vehicle = await Vehicle.findOne(filter);
     if (!vehicle) throw createError(404, 'Vehicle not found.');
     res.json({ success: true, data: vehicle });
   } catch (err) {

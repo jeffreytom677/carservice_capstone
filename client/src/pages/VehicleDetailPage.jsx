@@ -99,14 +99,17 @@ export default function VehicleDetailPage() {
       const [vRes, sRes, stRes] = await Promise.all([
         vehicleService.get(id),
         serviceRecordService.list(id, { page, limit: 10 }),
-        adminService.getServiceTypes({ showInactive: false, limit: 50 }),
+        adminService.getServiceTypes({ showInactive: false, limit: 50 }).catch(() => ({ data: { data: [] } })),
       ]);
       setVehicle(vRes.data.data);
-      setRecords(sRes.data.data);
+      setRecords(sRes.data.data || []);
       setPagination(sRes.data.pagination);
-      setServiceTypes(stRes.data.data);
-    } catch { setError('Failed to load vehicle details.'); }
-    finally { setLoading(false); }
+      setServiceTypes(stRes.data.data || []);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to load vehicle details.');
+    } finally {
+      setLoading(false);
+    }
   }, [id, page]);
 
   useEffect(() => { load(); }, [load]);

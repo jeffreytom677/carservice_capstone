@@ -12,7 +12,7 @@ const audit = (actor, action, entity, entityId) =>
 export const getServiceTypes = async (req, res, next) => {
   try {
     const { page, limit, skip } = req.pagination;
-    const showInactive = req.query.showInactive === 'true';
+    const showInactive = req.user?.role === 'admin' && req.query.showInactive === 'true';
     const filter = showInactive ? {} : { isActive: true };
 
     const [types, total] = await Promise.all([

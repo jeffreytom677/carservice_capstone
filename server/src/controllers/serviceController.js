@@ -4,8 +4,9 @@ import ServiceType from '../models/ServiceType.js';
 import { createError } from '../middleware/errorMiddleware.js';
 
 /** Resolve and verify vehicle ownership */
-const requireVehicleOwnership = async (vehicleId, userId) => {
-  const vehicle = await Vehicle.findOne({ _id: vehicleId, owner: userId });
+const requireVehicleOwnership = async (vehicleId, userId, userRole) => {
+  const filter = userRole === 'admin' ? { _id: vehicleId } : { _id: vehicleId, owner: userId };
+  const vehicle = await Vehicle.findOne(filter);
   if (!vehicle) throw createError(403, 'Vehicle not found or access denied.');
   return vehicle;
 };
@@ -13,7 +14,7 @@ const requireVehicleOwnership = async (vehicleId, userId) => {
 // ── GET /api/vehicles/:vehicleId/services ─────────────────────────────────────
 export const getServiceRecords = async (req, res, next) => {
   try {
-    await requireVehicleOwnership(req.params.vehicleId, req.user._id);
+    await requireVehicleOwnership(req.params.vehicleId, req.user._id, req.user.role);
 
     const { page, limit, skip } = req.pagination;
     const { serviceType, dateFrom, dateTo, costMin, costMax, sortBy = 'date', order = 'desc' } = req.query;
@@ -57,7 +58,7 @@ export const getServiceRecords = async (req, res, next) => {
 // ── POST /api/vehicles/:vehicleId/services ────────────────────────────────────
 export const createServiceRecord = async (req, res, next) => {
   try {
-    const vehicle = await requireVehicleOwnership(req.params.vehicleId, req.user._id);
+    const vehicle = await requireVehicleOwnership(req.params.vehicleId, req.user._id, req.user.role);
 
     if (vehicle.isArchived) {
       throw createError(400, 'Cannot add service records to an archived vehicle.');
@@ -122,7 +123,7 @@ export const createServiceRecord = async (req, res, next) => {
 // ── GET /api/vehicles/:vehicleId/services/:id ─────────────────────────────────
 export const getServiceRecord = async (req, res, next) => {
   try {
-    await requireVehicleOwnership(req.params.vehicleId, req.user._id);
+    await requireVehicleOwnership(req.params.vehicleId, req.user._id, req.user.role);
     const record = await ServiceRecord.findOne({
       _id: req.params.id,
       vehicle: req.params.vehicleId,
@@ -140,7 +141,7 @@ export const getServiceRecord = async (req, res, next) => {
 // ── PUT /api/vehicles/:vehicleId/services/:id ─────────────────────────────────
 export const updateServiceRecord = async (req, res, next) => {
   try {
-    await requireVehicleOwnership(req.params.vehicleId, req.user._id);
+    await requireVehicleOwnership(req.params.vehicleId, req.user._id, req.user.role);
     const { cost, notes, parts, garage } = req.body;
 
     if (cost !== undefined && cost < 0) throw createError(400, 'Cost cannot be negative.');
@@ -163,7 +164,7 @@ export const updateServiceRecord = async (req, res, next) => {
 // ── DELETE /api/vehicles/:vehicleId/services/:id ──────────────────────────────
 export const deleteServiceRecord = async (req, res, next) => {
   try {
-    await requireVehicleOwnership(req.params.vehicleId, req.user._id);
+    await requireVehicleOwnership(req.params.vehicleId, req.user._id, req.user.role);
     const record = await ServiceRecord.findOneAndDelete({
       _id: req.params.id,
       vehicle: req.params.vehicleId,

@@ -20,6 +20,8 @@ import notificationRoutes from './routes/notificationRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import exportRoutes from './routes/exportRoutes.js';
+import garageRoutes from './routes/garageRoutes.js';
+import { startReminderCron } from './config/reminderCron.js';
 
 const app = express();
 
@@ -63,6 +65,7 @@ app.use('/api/vehicles', exportRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/garages', garageRoutes);
 app.use('/api/admin', adminRoutes);
 
 // ── Health check ──────────────────────────────────────────────────────────────
@@ -80,6 +83,7 @@ const PORT = process.env.PORT || 5000;
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`\n🚀  ServiceBook API running on port ${PORT} [${process.env.NODE_ENV}]\n`);
+    startReminderCron();
   });
 });
 

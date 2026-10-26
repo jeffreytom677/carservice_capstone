@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS custom properties (mirrors Tailwind tokens for non-utility usage) ────── */
+:root {
+  --color-background: #0A0A0B;
+  --color-surface: #111113;
+  --color-elevated: #18181B;
+  --color-border: #27272A;
+  --color-text-primary: #FAFAFA;
+  --color-text-secondary: #A1A1AA;
+  --color-text-muted: #71717A;
+  --color-accent: #F59E0B;
+  --color-accent-hover: #D97706;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-info: #3B82F6;
+
+  --radius-card: 12px;
+  --radius-input: 8px;
+  --radius-button: 8px;
+  --radius-badge: 6px;
+
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+
+  --sidebar-width: 240px;
+}
+
+/* ── Base resets ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── Scrollbar styling ────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* ── Tabular numerals for cost / odometer values ─────────────────────────────── */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ── Focus ring (amber, for accessibility) ───────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-input);
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Skeleton shimmer animation ──────────────────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-elevated) 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-input);
+}
+
+/* ── Utility classes for the dark theme ─────────────────────────────────────── */
+@layer components {
+  .card {
+    @apply bg-surface border border-border rounded-card shadow-card;
+  }
+
+  .card-elevated {
+    @apply bg-elevated border border-border rounded-card shadow-elevated;
+  }
+
+  .btn-primary {
+    @apply bg-accent hover:bg-accent-hover text-background font-semibold
+           px-4 py-2 rounded-button transition-all duration-fast
+           disabled:opacity-50 disabled:cursor-not-allowed
+           focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2
+           focus-visible:ring-offset-background;
+  }
+
+  .btn-secondary {
+    @apply bg-elevated hover:bg-border text-text-primary border border-border
+           font-medium px-4 py-2 rounded-button transition-all duration-fast
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-danger {
+    @apply bg-danger/10 hover:bg-danger/20 text-danger border border-danger/30
+           font-medium px-4 py-2 rounded-button transition-all duration-fast;
+  }
+
+  .input {
+    @apply bg-elevated border border-border text-text-primary
+           rounded-input px-3 py-2 w-full transition-all duration-fast
+           placeholder:text-text-muted
+           focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent;
+  }
+
+  .label {
+    @apply block text-text-secondary text-sm font-medium mb-1;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-badge text-xs font-medium;
+  }
+
+  .badge-success { @apply badge bg-success/10 text-success border border-success/20; }
+  .badge-warning { @apply badge bg-warning/10 text-warning border border-warning/20; }
+  .badge-danger  { @apply badge bg-danger/10  text-danger  border border-danger/20;  }
+  .badge-info    { @apply badge bg-info/10    text-info    border border-info/20;    }
+  .badge-muted   { @apply badge bg-elevated   text-text-muted border border-border;  }
+
+  .page-title {
+    @apply text-text-primary font-semibold;
+    font-size: 26px;
+    line-height: 1.2;
+  }
+
+  .section-title {
+    @apply text-text-primary font-semibold;
+    font-size: 17px;
+  }
+
+  .nav-link {
+    @apply flex items-center gap-3 px-3 py-2 rounded-input text-text-secondary
+           hover:text-text-primary hover:bg-elevated transition-all duration-fast
+           text-sm font-medium;
+  }
+
+  .nav-link.active {
+    @apply text-accent bg-accent/10 border-l-2 border-accent;
+  }
+
+  .table-header {
+    @apply text-text-muted text-xs font-medium uppercase tracking-wider;
+  }
+
+  .table-row {
+    @apply border-t border-border hover:bg-elevated/50 transition-colors duration-fast;
+  }
+
+  .stat-card {
+    @apply card p-5 flex flex-col gap-2;
+  }
+}

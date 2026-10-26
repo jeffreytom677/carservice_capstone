@@ -1,0 +1,14 @@
+{
+  "name": "servicebook",
+  "version": "1.0.0",
+  "description": "ServiceBook monorepo — vehicle service history and reminder app",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n API,WEB -c yellow,cyan \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "seed": "npm run seed --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

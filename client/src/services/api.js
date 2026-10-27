@@ -9,17 +9,10 @@
  */
 
 import axios from 'axios';
-
-const rawBaseURL =
-  import.meta.env.VITE_API_URL ||
-  import.meta.env.VITE_API_BASE_URL ||
-  'https://carservice-capstone-1.onrender.com';
-
-const cleanURL = rawBaseURL.replace(/\/+$/, '');
-const baseURL = cleanURL.endsWith('/api') ? cleanURL : `${cleanURL}/api`;
+import { API_URL } from '../config.js';
 
 const api = axios.create({
-  baseURL,
+  baseURL: API_URL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 15000,
 });

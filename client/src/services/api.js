@@ -10,8 +10,16 @@
 
 import axios from 'axios';
 
+const rawBaseURL =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_API_BASE_URL ||
+  'https://carservice-capstone-1.onrender.com';
+
+const cleanURL = rawBaseURL.replace(/\/+$/, '');
+const baseURL = cleanURL.endsWith('/api') ? cleanURL : `${cleanURL}/api`;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 15000,
 });

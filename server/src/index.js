@@ -27,12 +27,24 @@ const app = express();
 
 // ── Security middleware ───────────────────────────────────────────────────────
 app.use(helmet());
-app.use(
-  cors({
-    origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
-    credentials: true,
-  })
-);
+const allowedOrigins = [
+  'https://carservice-capstone.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  /^https:\/\/carservice-capstone.*\.vercel\.app$/,
+  ...(process.env.CLIENT_ORIGIN ? [process.env.CLIENT_ORIGIN] : []),
+];
+
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(mongoSanitize()); // strips $, . from user input to prevent NoSQL injection
 
 // ── General rate limit (all routes) ──────────────────────────────────────────
